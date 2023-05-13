@@ -1,0 +1,134 @@
+// C++ code
+// Iván Agustín Videla Ribodino
+// DOJO C
+// DIV "D"
+// Dojo Número Uno - Tercera Entrega
+// 1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+// 2- Tiene que implementar los tiempos correctos como se detallan a continuación. 3- El verde dura 5 segundos. 
+// 4- El amarillo dura 3 segundos. 
+// 5- Rojo dura 5 segundos. 
+// 6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+// 7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE. 
+// 8- Durante el amarillo: Tiene que sonar 1 vez por segundo en un tono SUAVE. 
+// 9- Al cambiar de verde a amarillo debe titilar 3 veces el verde antes de pasar al amarillo
+// 10- Al cambiar de amarillo a rojo se debe titilar 3 veces el amarillo
+// 11- Al cambiar de rojo a Amarillo se debe titilar 3 veces el rojo
+// 12- Al cambiar de amarillo a verde se debe titilar 3 veces el amarillo.
+// 13-  Agregar un botón (pull down) que al presionarlo se active la funcionalidad de luz verde con más tiempo, dándole a la persona que lo necesite más tiempo para cruzar la calle , sirve para la próxima luz verde y solo para la próxima luz verde después de presionar el botón. el tiempo se duplicará. 
+// 14-  Colocar dos semáforos de calles que se crucen  y programarlos para que funcionen en conjunto.
+
+#define BUZZER 12
+#define LED_ROJO 11
+#define LED_AMARILLO 10
+#define LED_VERDE 9
+#define LED_ROJO_ENFRENTADO 8
+#define LED_AMARILLO_ENFRENTADO 7
+#define LED_VERDE_ENFRENTADO 6
+#define PULSADOR_PULL_DOWN 2
+
+void setup()
+{
+  pinMode(BUZZER,OUTPUT);
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_AMARILLO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(LED_ROJO_ENFRENTADO, OUTPUT);
+  pinMode(LED_AMARILLO_ENFRENTADO, OUTPUT);
+  pinMode(LED_VERDE_ENFRENTADO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(PULSADOR_PULL_DOWN, INPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  prenderLedConSonidoYLaEnfrentada(LED_ROJO, LED_VERDE_ENFRENTADO,5000,250,500);
+  apagarLedSinSonidoYLaEnfrentada(LED_ROJO, LED_VERDE_ENFRENTADO,0);
+  titilarLedColorYLaEnfrentada(LED_ROJO, LED_VERDE_ENFRENTADO,250,3);
+  prenderLedConSonidoYLaEnfrentada(LED_AMARILLO, LED_AMARILLO_ENFRENTADO,3000,500,100);
+  apagarLedSinSonidoYLaEnfrentada(LED_AMARILLO, LED_AMARILLO_ENFRENTADO,0);
+  titilarLedColorYLaEnfrentada(LED_AMARILLO, LED_AMARILLO_ENFRENTADO,250,3);
+  prenderLedsSinSonidoYLaEnfrentada(LED_VERDE, LED_ROJO_ENFRENTADO, 5000);
+  activarLuzVerdeConMasTiempoYLaEnfrentada(5000);
+  apagarLedSinSonidoYLaEnfrentada(LED_VERDE, LED_ROJO_ENFRENTADO,0);
+  titilarLedColorYLaEnfrentada(LED_VERDE,LED_ROJO_ENFRENTADO,250,3);
+  prenderLedConSonidoYLaEnfrentada(LED_AMARILLO,LED_AMARILLO_ENFRENTADO,3000,500,100);
+  apagarLedSinSonidoYLaEnfrentada(LED_AMARILLO,LED_AMARILLO_ENFRENTADO,0);
+  titilarLedColorYLaEnfrentada(LED_AMARILLO,LED_AMARILLO_ENFRENTADO,250,3);
+}
+
+void prenderLedsSinSonidoYLaEnfrentada(int led1, int led2, int tiempoLed)
+{
+  
+  Serial.println("Prendo el led sin sonido");
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+  delay(tiempoLed);
+  
+}
+
+void apagarLedSinSonidoYLaEnfrentada(int led1, int led2, int tiempoLed)
+{
+  Serial.println("Apago el led sin sonido");
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  delay(tiempoLed);
+}
+
+void prenderApagarBuzzer(int tiempoSonido, int ruidoBuzzer)
+{
+  Serial.println("Prendo buzzer");
+  tone(BUZZER,ruidoBuzzer);
+  delay(tiempoSonido);
+  Serial.println("Apago buzzer");
+  noTone(BUZZER);
+  delay(tiempoSonido);
+}
+
+void prenderLedConSonidoYLaEnfrentada(int led1, int led2, int tiempoLed, int tiempoSonido, int ruidoBuzzer)
+{
+  Serial.println("Prendo el led con sonido");
+  for(int i = 0; i < tiempoLed; i += 1000)
+  {
+    if(led1 == LED_ROJO and led2 == LED_VERDE_ENFRENTADO)
+    {
+      digitalWrite(led1, HIGH);
+      digitalWrite(led2,HIGH);
+      prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+      prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+    }
+    else
+    {
+      if(led1 == LED_AMARILLO)
+      {
+        digitalWrite(led1, HIGH);
+        digitalWrite(led2,HIGH);
+      	prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+      }
+    }
+  }
+}
+
+void titilarLedColorYLaEnfrentada(int led1, int led2, int tiempoLed, int cantidadTitileo)
+{
+  for(int i = 0; i < cantidadTitileo; i++)
+  {
+    delay(tiempoLed);
+    prenderLedsSinSonidoYLaEnfrentada(led1, led2, tiempoLed);
+    apagarLedSinSonidoYLaEnfrentada(led1, led2, tiempoLed);
+  }
+}
+
+void activarLuzVerdeConMasTiempoYLaEnfrentada(int tiempoLed)
+{
+  int pulsadorDown;
+  pulsadorDown = digitalRead(PULSADOR_PULL_DOWN);
+  if (pulsadorDown == HIGH)
+  {
+    prenderLedsSinSonidoYLaEnfrentada(LED_VERDE,LED_ROJO_ENFRENTADO,tiempoLed);
+  }
+  else
+  {
+    apagarLedSinSonidoYLaEnfrentada(LED_VERDE, LED_ROJO_ENFRENTADO,0);
+  }
+}

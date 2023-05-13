@@ -1,0 +1,94 @@
+// C++ code
+// Iván Agustín Videla Ribodino
+// DOJO C
+// DIV "D"
+// Dojo Número Uno - Segunda Entrega
+// 1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+// 2- Tiene que implementar los tiempos correctos como se detallan a continuación. 3- El verde dura 5 segundos. 
+// 4- El amarillo dura 3 segundos. 
+// 5- Rojo dura 5 segundos. 
+// 6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+// 7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE. 
+// 8- Durante el amarillo: Tiene que sonar 1 vez por segundo en un tono SUAVE. 
+// 9- Al cambiar de verde a amarillo debe titilar 3 veces el verde antes de pasar al amarillo
+// 10- Al cambiar de amarillo a rojo se debe titilar 3 veces el amarillo
+// 11- Al cambiar de rojo a Amarillo se debe titilar 3 veces el rojo
+// 12- Al cambiar de amarillo a verde se debe titilar 3 veces el amarillo.
+
+#define BUZZER 12
+#define LED_ROJO 11
+#define LED_AMARILLO 10
+#define LED_VERDE 9
+
+void setup()
+{
+  pinMode(BUZZER,OUTPUT);
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_AMARILLO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  prenderApagarLedConSonido(LED_ROJO,5000,250,500);
+  titilarLedColor(LED_ROJO,250,3);
+  prenderApagarLedConSonido(LED_AMARILLO,3000,500,100);
+  titilarLedColor(LED_AMARILLO,250,3);
+  prenderApagarLedSinSonido(LED_VERDE,5000);
+  titilarLedColor(LED_VERDE,250,3);
+  prenderApagarLedConSonido(LED_AMARILLO,3000,500,100);
+  titilarLedColor(LED_AMARILLO,250,3);
+}
+
+void prenderApagarLedSinSonido(int led, int tiempoLed)
+{
+  
+  Serial.println("Prendo el led sin sonido");
+  digitalWrite(led, HIGH);
+  delay(tiempoLed);
+  digitalWrite(led, LOW);
+}
+
+void prenderApagarBuzzer(int tiempoSonido, int ruidoBuzzer)
+{
+  Serial.println("Prendo buzzer");
+  tone(BUZZER,ruidoBuzzer);
+  delay(tiempoSonido);
+  Serial.println("Apago buzzer");
+  noTone(BUZZER);
+  delay(tiempoSonido);
+}
+
+void prenderApagarLedConSonido(int led, int tiempoLed, int tiempoSonido, int ruidoBuzzer)
+{
+  Serial.println("Prendo el led con sonido");
+  for(int i = 0; i < tiempoLed; i += 1000)
+  {
+    if(led == LED_ROJO)
+    {
+      digitalWrite(led, HIGH);
+      prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+      prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+    }
+    else
+    {
+      if(led == LED_AMARILLO)
+      {
+        digitalWrite(led, HIGH);
+      	prenderApagarBuzzer(tiempoSonido, ruidoBuzzer);
+      }
+    }
+  }
+  digitalWrite(led,LOW);
+}
+
+void titilarLedColor(int led, int tiempoLed, int cantidadTitileo)
+{
+  for(int i = 0; i < cantidadTitileo; i++)
+  {
+    delay(tiempoLed);
+    prenderApagarLedSinSonido(led, tiempoLed);
+    delay(tiempoLed);
+  }
+}

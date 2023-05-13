@@ -1,0 +1,63 @@
+// C++ code
+// Iván Agustín Videla Ribodino
+// DOJO C
+// DIV "D"
+// Dojo Número Uno 
+// 1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+// 2- Tiene que implementar los tiempos correctos como se detallan a continuación. 
+// 3- El verde dura 5 segundos. 
+// 4- El amarillo dura 3 segundos. 
+// 5- Rojo dura 5 segundos. 
+// 6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+// 7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE. 
+
+#define BUZZER 12
+#define LED_ROJO 11
+#define LED_AMARILLO 10
+#define LED_VERDE 9
+
+void setup()
+{
+  pinMode(BUZZER,OUTPUT);
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_AMARILLO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  prenderApagarLedConSonido(LED_ROJO,5000);
+  prenderApagarLedSinSonido(LED_AMARILLO,3000);
+  prenderApagarLedSinSonido(LED_VERDE,5000);
+}
+
+void prenderApagarLedSinSonido(int led, int tiempo)
+{
+  Serial.println("Prendo el led sin sonido");
+  digitalWrite(led, HIGH);
+  delay(tiempo);
+  digitalWrite(led, LOW);
+}
+
+void prenderApagarBuzzer(int tiempo)
+{
+  Serial.println("Prendo buzzer");
+  tone(BUZZER,500);
+  delay(tiempo);
+  Serial.println("Apago buzzer");
+  noTone(BUZZER);
+  delay(tiempo);
+}
+
+void prenderApagarLedConSonido(int led, int tiempo)
+{
+  Serial.println("Prendo el led con sonido");
+  for(int i = 0; i < tiempo; i += 1000)
+  {
+    digitalWrite(led, HIGH);
+	prenderApagarBuzzer(250);
+   	prenderApagarBuzzer(250);
+  }
+  digitalWrite(led,LOW);
+}
