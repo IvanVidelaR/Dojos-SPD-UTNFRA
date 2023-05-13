@@ -1,0 +1,117 @@
+// C++ code
+// Iván Agustín Videla Ribodino
+// DOJO C
+// DIV "D"
+// Dojo Número Dos - Primera Entrega
+// Consigna SUBTE:
+// La empresa “UTN FRA Robotics” ganó la licitación de un proyecto, y deberá
+// Implementar un sistema que permita al usuario saber a qué estación de subte está
+// llegando, aparte el sistema muestra las estaciones que faltan hasta llegar a destino,
+// para ello debemos utilizar 4 LEDs y el display de 7 segmentos. Esta vez el buzzer
+// deberá emitir un sonido diferente cada vez que se llegue a una estación.
+// El sistema deberá arrancar apagado, luego de presionar el botón empezará y hará lo
+// pedido.
+
+// 1 - Parte Uno:(se entrega hoy)
+// Deberá mostrar los leds por estación y el número de estación en el display 7
+// segmentos.
+  
+#define LED_PRIMERO 12
+#define LED_SEGUNDO 11
+#define LED_TERCERO 10
+#define LED_CUARTO 9
+#define PULSADOR A0
+
+#define LED_A 2
+#define LED_B 3
+#define LED_C 4
+#define LED_D 5
+#define LED_E 6
+#define LED_F 7
+#define LED_G 8
+
+bool banderaProgramaIniciado = false;
+
+void setup()
+{
+  pinMode(LED_PRIMERO,OUTPUT);
+  pinMode(LED_SEGUNDO,OUTPUT);
+  pinMode(LED_TERCERO,OUTPUT);
+  pinMode(LED_CUARTO,OUTPUT);
+  pinMode(PULSADOR,INPUT);
+  pinMode(LED_A, OUTPUT);
+  pinMode(LED_B, OUTPUT);
+  pinMode(LED_C, OUTPUT);
+  pinMode(LED_D, OUTPUT);
+  pinMode(LED_E, OUTPUT);
+  pinMode(LED_F, OUTPUT);
+  pinMode(LED_G, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  esperarInicio(PULSADOR);
+  
+  Serial.println("ESTACION CONSTITUCION - 3 para Moreno: ");
+  prenderLed(LED_PRIMERO);
+  encenderApagarLedsSieteSegmentos(1,1,1,1,0,0,1,1250);
+  apagarLed(LED_PRIMERO);
+  encenderApagarLedsSieteSegmentos(0,0,0,0,0,0,0,500);
+
+  Serial.println("ESTACION SAN JUAN - 2 para Moreno: ");
+  prenderLed(LED_SEGUNDO);
+  encenderApagarLedsSieteSegmentos(1,1,0,1,1,0,1,1250);
+  apagarLed(LED_SEGUNDO);
+  encenderApagarLedsSieteSegmentos(0,0,0,0,0,0,0,500);
+
+  Serial.println("ESTACION INDEPENDENCIA - 1 para Moreno: ");
+  prenderLed(LED_TERCERO);
+  encenderApagarLedsSieteSegmentos(0,1,1,0,0,0,0,1250);
+  apagarLed(LED_TERCERO);
+  encenderApagarLedsSieteSegmentos(0,0,0,0,0,0,0,500);
+
+  Serial.println("ESTACION MORENO - 0 para Moreno: ");
+  prenderLed(LED_CUARTO);
+  encenderApagarLedsSieteSegmentos(1,1,1,1,1,1,0,1250);
+  apagarLed(LED_CUARTO);
+  encenderApagarLedsSieteSegmentos(0,0,0,0,0,0,0,500);
+}
+
+void encenderApagarLedsSieteSegmentos(int a, int b, int c, int d, int e, int f, int g, int tiempo)
+{
+  digitalWrite(LED_A, a);
+  digitalWrite(LED_B, b);
+  digitalWrite(LED_C, c);
+  digitalWrite(LED_D, d);
+  digitalWrite(LED_E, e);
+  digitalWrite(LED_F, f);
+  digitalWrite(LED_G, g);
+  delay(tiempo);
+}
+
+void prenderLed(int led)
+{
+  digitalWrite(led, HIGH);
+}
+
+void apagarLed(int led)
+{
+  digitalWrite(led, LOW);
+}
+
+void esperarInicio(int pulsador)
+{
+  int estadoPulsador = digitalRead(pulsador);
+  
+  if(banderaProgramaIniciado == false)
+  {
+      while(estadoPulsador == LOW) 
+      {
+        Serial.println("Presione el pulsador para iniciar: Esperando inicio...");
+        delay(500);
+        estadoPulsador = digitalRead(pulsador);
+      }
+    banderaProgramaIniciado = true;  
+  }
+}
