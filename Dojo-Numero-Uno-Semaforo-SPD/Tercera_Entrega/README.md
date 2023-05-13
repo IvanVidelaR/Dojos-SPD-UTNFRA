@@ -1,4 +1,4 @@
-# Dojo N°1 Semaforo Primera Entrega
+# Dojo N°1 Semaforo Tercera Entrega
 ![Tinkercad](./img/ArduinoTinkercad.jpg)
 
 
